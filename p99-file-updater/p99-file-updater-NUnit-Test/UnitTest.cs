@@ -5,7 +5,7 @@ using System;
 namespace p99_file_updater_NUnit_Test
 {
     [TestClass]
-    public class HelloWorldViewModelTests
+    public class p99ViewModelTests
     {
         p99FileDownloaderViewModel hw;
 
