@@ -10,6 +10,7 @@
     <Page.Resources>
         <local:p99FileDownloaderViewModel x:Key="p99FileDownloaderViewModel" />
         <localConverters:ChecksumByteToStringConverter x:Key="ChecksumByteToStringConverter" />
+        <localConverters:StringUrlToUriConverter x:Key="StringUrlToUriConverter" />
     </Page.Resources>
     <Grid x:Name="File_Downloader_Page" 
           RenderTransformOrigin="0.448,0.153" Margin="0,0,10,10" DataContext="{StaticResource p99FileDownloaderViewModel}">
@@ -23,9 +24,9 @@
                  IsReadOnly="True" Height="55" Header="Remote File SHA256" TabIndex="2" InputScope="Text" />
         <CheckBox Content="Override Checksum Validation" IsChecked="{Binding OverrideChecksumValidation, Mode=OneWay}" 
                   Margin="811,659,0,0" VerticalAlignment="Top" />
-        <TextBox HorizontalAlignment="Left" Margin="177,406,0,0" Text="{Binding Mode=OneWay, Path=EQDirectoryPath}" 
+        <TextBox HorizontalAlignment="Left" Margin="177,406,0,0" Text="{Binding Mode=TwoWay, Path=EQDirectoryPath}" 
                  VerticalAlignment="Top" Width="435" IsReadOnly="False" Height="55" Header="EverQuest Directory" TabIndex="3" InputScope="Text" />
-        <TextBox HorizontalAlignment="Left" Margin="177,306,0,0" Text="{Binding Mode=OneWay, Path=UrlToDownloadFrom}" 
+        <TextBox HorizontalAlignment="Left" Margin="177,306,0,0" Text="{Binding Mode=TwoWay, Path=DownloadAddress, Converter={StaticResource StringUrlToUriConverter}}" 
                  VerticalAlignment="Top" Width="435" IsReadOnly="False" Height="61" Header="URL" TabIndex="9" InputScope="Text" />
         <TextBox HorizontalAlignment="Left" Margin="177,576,0,0" Text="{Binding Mode=TwoWay, Path=ChecksumHashFromApp, Converter={StaticResource ChecksumByteToStringConverter}}" 
                  VerticalAlignment="Top" Width="656" IsReadOnly="False" Height="55" Header="Provided SHA256" TabIndex="4" InputScope="Text" />

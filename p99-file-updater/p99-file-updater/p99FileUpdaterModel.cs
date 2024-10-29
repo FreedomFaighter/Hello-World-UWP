@@ -8,8 +8,6 @@ namespace p99FileUpdater
 {
     public class p99FileUpdaterModel
     {
-        public String UpdateFileURI;
-
         public String EQDirectoryPath;
 
         //Dictionary<String, Tuple<String, String>> listOfFilesFromURI { get; set; }
@@ -18,14 +16,10 @@ namespace p99FileUpdater
 
         public bool? overrideChecksumValidation = false;
 
-        public bool? messageDisplayed = false;
+        public bool? operationEnabled = false;
 
         public String messages = String.Empty;
 
-        public MemoryStream memoryStream;
-
         public Uri downloadAddress;
-
-        public HttpClient downloadClient;
     }
 }

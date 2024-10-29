@@ -10,14 +10,26 @@ using System.IO.Compression;
 
 namespace p99FileUpdater
 {
+    /// <summary>
+    /// file downloader class
+    /// </summary>
     public class p99FileDownloaderViewModel : INotifyPropertyChanged
     {
+        /// <summary>
+        /// ICommand interface included from another repository
+        /// </summary>
         public ICommand DownloadFromSetURI { get; }
-
+        /// <summary>
+        /// Model for updater
+        /// </summary>
         private p99FileUpdaterModel p99fuv = new p99FileUpdaterModel();
+        /// <summary>
+        /// write message to text box
+        /// </summary>
+        /// <param name="message"></param>
         private void WriteToTextBoxWithString(String message)
         {
-            MessageBox += String.Join(String.Empty, new String[] { message, "\n" });
+            MessageBox = String.Join(String.Empty, new String[] { message, "\n" , MessageBox});
         }
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
@@ -27,14 +39,12 @@ namespace p99FileUpdater
             MessageBox = String.Empty;
             try
             {
-                MessageDisplayed = true;
                 WriteToTextBoxWithString("creating httpclient");
-                DownloadClient = new HttpClient();
 
-                WriteToTextBoxWithString("creating Uri Object");
-                DownloadAddress = new Uri(UrlToDownloadFrom);
+                HttpClient httpClient = new HttpClient();
+
                 WriteToTextBoxWithString("creating stream object");
-                using (Stream response = await DownloadClient.GetStreamAsync(DownloadAddress))
+                using (Stream response = await httpClient.GetStreamAsync(DownloadAddress.ToString()))
                 {
                     MemoryStream memoryStream = new MemoryStream();
                     await response.CopyToAsync(memoryStream);
@@ -44,7 +54,7 @@ namespace p99FileUpdater
                     {
                         ChecksumHashFromFileUrl = memorySha.ComputeHash(memoryStream.ToArray());
 
-                        if (OverrideChecksumValidation.HasValue ? !OverrideChecksumValidation.Value : false)
+                        if (OverrideChecksumValidation.HasValue && !OverrideChecksumValidation.Value)
                         {
                             if (ChecksumHashFromFileUrl.Equals(ChecksumHashFromApp))
                             {
@@ -101,7 +111,7 @@ namespace p99FileUpdater
             }
             finally
             {
-                MessageDisplayed = false;
+                OperationEnabled = false;
             }
             void setStreamAtInitialPosition(ref MemoryStream stream)
             {
@@ -132,20 +142,22 @@ namespace p99FileUpdater
             return false;
         }
 
+        bool EnableUpdateButton()
+        {
+            if (Directory.Exists(p99fuv.EQDirectoryPath) && DownloadAddress.AbsolutePath != String.Empty)
+            {
+                return true;
+            }
+            else
+                return false;
+        }
+
         public String MessageBox { get => p99fuv.messages; set => SetProperty(ref p99fuv.messages, value); }
-
-        public bool? MessageDisplayed { get => p99fuv.messageDisplayed; set => SetProperty(ref p99fuv.messageDisplayed, value); }
+        public bool? OperationEnabled { get => p99fuv.operationEnabled; set => SetProperty(ref p99fuv.operationEnabled, value); }
         public string EQDirectoryPath { get => p99fuv.EQDirectoryPath; set => SetProperty(ref p99fuv.EQDirectoryPath, value); }
-        public string UrlToDownloadFrom { get => p99fuv.UpdateFileURI; set => SetProperty(ref p99fuv.UpdateFileURI, value); }
-
         public byte[] ChecksumHashFromFileUrl { get => p99fuv.checksumHashFromFileUrl; set => SetProperty(ref p99fuv.checksumHashFromFileUrl, value); }
-
         public byte[] ChecksumHashFromApp { get => p99fuv.checksumHashFromApp; set => SetProperty(ref p99fuv.checksumHashFromApp, value); }
-
         public bool? OverrideChecksumValidation { get => p99fuv.overrideChecksumValidation; set => SetProperty(ref p99fuv.overrideChecksumValidation, value); }
-
         public Uri DownloadAddress { get => p99fuv.downloadAddress; set => SetProperty(ref p99fuv.downloadAddress, value); }
-
-        public HttpClient DownloadClient { get => p99fuv.downloadClient; set => SetProperty(ref p99fuv.downloadClient, value); }
     }
 }
